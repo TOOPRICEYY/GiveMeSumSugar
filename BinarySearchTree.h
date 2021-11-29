@@ -361,7 +361,7 @@ private:
   //          tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static Node *copy_nodes_impl(Node *node) {
-    assert(false);
+    insert_impl(node)
   }
 
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
@@ -415,12 +415,20 @@ private:
       if(less(ode->datum,item)  ) return node->right = new Node(item, nullptr, nullptr);
       return node->left = new Node(item, nullptr, nullptr);
     }
-    if(less(node->datum,item) && !node->right){ 
+    if(less(node->datum,item)){ 
+      if(!node->right){
       node->right = new Node(item, nullptr, nullptr);
+      }else{
+        insert_impl(node->right,item,less);
+      }
       return node; 
     }
-    if(less(item, node->datum) && !node->left){
+    if(less(item, node->datum)){
+      if(!node->left){
       node->left = new Node(item, nullptr, nullptr);
+      }else{
+        insert_impl(node->left,item,less);
+      }
       return node; 
     }
 
