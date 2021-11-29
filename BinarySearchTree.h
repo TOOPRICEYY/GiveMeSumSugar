@@ -468,7 +468,9 @@ private:
   //       See https://en.wikipedia.org/wiki/Tree_traversal#In-order
   //       for the definition of a in-order traversal.
   static void traverse_inorder_impl(const Node *node, std::ostream &os) {
-    assert(false);
+    if(node->left){traverse_inorder_impl(node->left,os)}
+    os << node->datum << " ";
+    if(node->right){traverse_inorder_impl(node->right,os)}
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using a pre-order traversal,
@@ -479,7 +481,11 @@ private:
   //       See https://en.wikipedia.org/wiki/Tree_traversal#Pre-order
   //       for the definition of a pre-order traversal.
   static void traverse_preorder_impl(const Node *node, std::ostream &os) {
-    assert(false);
+    if(node->right){traverse_preorder_impl(node->right,os)}
+    os << node->datum << " ";
+    if(node->left){traverse_preorder_impl(node->left,os)}
+    
+   
   }
 
   // EFFECTS : Returns a pointer to the Node containing the smallest element
@@ -494,7 +500,18 @@ private:
   //       'less' parameter). Based on the result, you gain some information
   //       about where the element you're looking for could be.
   static Node * min_greater_than_impl(Node *node, const T &val, Compare less) {
-    assert(false);
+    if(less(val,node->left->datum)){ // if left is still smaller then val
+      return min_greater_than_impl(node->left,val,less);
+    } 
+    if(less(val,node->datum)){ // if not left not less but current node is
+      return node;
+    }
+    if(!node->right){
+      return nullptr;
+    }
+    if(less(node->right,val)){
+      return min_greater_than_impl(node->right,val,less);
+    }
   }
 
 
