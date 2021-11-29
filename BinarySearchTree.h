@@ -331,7 +331,7 @@ private:
   // NOTE:    This function must run in constant time.
   //          No iteration or recursion is allowed.
   static bool empty_impl(const Node *node) {
-    assert(false);
+    return !(node->left || node->right);
   }
 
   // EFFECTS: Returns the size of the tree rooted at 'node', which is the
@@ -339,7 +339,8 @@ private:
   //          tree is 0.
   // NOTE:    This function must be tree recursive.
   static int size_impl(const Node *node) {
-    assert(false);
+    if(empty_impl(node)) return 1;
+    return size_impl(node->right)+size_impl(node->left);
   }
 
   // EFFECTS: Returns the height of the tree rooted at 'node', which is the
@@ -347,7 +348,12 @@ private:
   //          The height of an empty tree is 0.
   // NOTE:    This function must be tree recursive.
   static int height_impl(const Node *node) {
-    assert(false);
+    if(empty_impl(node)) return 1;
+    int l = height_impl(node->left);
+    int r = height_impl(node->right);
+    if(l>r) return l+1;
+    return r+1;
+    
   }
 
   // EFFECTS: Creates and returns a pointer to the root of a new node structure
@@ -361,7 +367,10 @@ private:
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static void destroy_nodes_impl(Node *node) {
-    assert(false);
+    if(empty_impl(node)) del node;
+    destroy_nodes_impl(node->right);
+    destroy_nodes_impl(node->left);
+    del node;
   }
 
   // EFFECTS : Searches the tree rooted at 'node' for an element equivalent
@@ -377,7 +386,12 @@ private:
   //       Two elements A and B are equivalent if and only if A is
   //       not less than B and B is not less than A.
   static Node * find_impl(Node *node, const T &query, Compare less) {
-    assert(false);
+    if(empty_impl(node)) return nullptr;
+    if(!(less(node->datum, query) || less(query, node->datum))) return node;
+    node *r = find_impl(node->right, query, less);
+    if(r) return r;
+    node *l = find_impl(node->left, query, less);
+    return l;
   }
 
   // REQUIRES: item is not already contained in the tree rooted at 'node'
@@ -396,7 +410,20 @@ private:
   //       template, NOT according to the < operator. Use the "less"
   //       parameter to compare elements.
   static Node * insert_impl(Node *node, const T &item, Compare less) {
-    assert(false);
+    assert(node->datum!=item);
+    if(empty_impl(node)){ // when empty tree get right to inserting
+      if(less(ode->datum,item)  ) return node->right = new Node(item, nullptr, nullptr);
+      return node->left = new Node(item, nullptr, nullptr);
+    }
+    if(less(node->datum,item) && !node->right){ 
+      node->right = new Node(item, nullptr, nullptr);
+      return node; 
+    }
+    if(less(item, node->datum) && !node->left){
+      node->left = new Node(item, nullptr, nullptr);
+      return node; 
+    }
+
   }
 
   // EFFECTS : Returns a pointer to the Node containing the minimum element
@@ -407,7 +434,8 @@ private:
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the smallest element lives.
   static Node * min_element_impl(Node *node) {
-    assert(false);
+    if(!node->left) return node->datum;
+    return min_element_impl(node->left);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the maximum element
@@ -416,7 +444,8 @@ private:
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the largest element lives.
   static Node * max_element_impl(Node *node) {
-    assert(false);
+    if(!node->right) return node->datum;
+    return max_element_impl(node->right);
   }
 
 
@@ -424,7 +453,11 @@ private:
   //          rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less) {
-    assert(false);
+    if(empty_impl(node)) return true;
+    if(less(node->right->datum,node->datum)||less(node->datum,node->left->datum)) return false;
+    check_sorting_invariant_impl(node->left,less);
+    check_sorting_invariant_impl(node->right,less);
+
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using an in-order traversal,
