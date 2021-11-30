@@ -126,4 +126,25 @@ private:
 //      // YOUR IMPLEMENTATION GOES HERE
 //    }
 
+
+template <typename K, typename V, typename C>
+bool Map<K, V, C>::empty() const {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+typename Map<K, V, C>::Iterator Map<K, V, C>::find(const K& k) const {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+V& Map<K, V, C>::operator[](const K& k) {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+std::pair<typename Map<K, V, C>::Iterator, bool> Map<K, V, C>::insert(const Pair_type &val) {
+  assert(false);
+}
+
 #endif // DO NOT REMOVE!!!
