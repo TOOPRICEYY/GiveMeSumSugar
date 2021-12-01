@@ -33,6 +33,12 @@ private:
 
   // A custom comparator
   class PairComp {
+    private:
+      Key_compare k;
+    public:
+    bool operator(Pair_type &l ,Pair_type r&) const{
+      return k(l,r);
+    }
   };
   
 
