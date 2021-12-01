@@ -64,13 +64,13 @@ public:
 
   // EFFECTS : Returns whether this Map is empty.
   bool empty() const{
-
+    return entries.empty();
   }
 
   // EFFECTS : Returns the number of elements in this Map.
   // NOTE : size_t is an integral type from the STL
   size_t size() const{
-
+    return entries.size();
   }
 
   // EFFECTS : Searches this Map for an element with a key equivalent
@@ -81,6 +81,7 @@ public:
   //       (key, value) pairs, you'll need to construct a dummy value
   //       using "Value_type()".
   Iterator find(const Key_type& k) const{
+    return entries.find({k,Value_type()});
     
   }
 
@@ -101,7 +102,7 @@ public:
   //
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
   Value_type& operator[](const Key_type& k){
-    return insert({k,Value_type()}).first;
+    return (*insert({k,Value_type()}).first).second;
   }
 
   // MODIFIES: this
@@ -113,25 +114,25 @@ public:
   //           an iterator to the newly inserted element, along with
   //           the value true.
   std::pair<Iterator, bool> insert(const Pair_type &val){
-    BinarySearchTree<Pair_type,PairComp>::iterator it = entries.end();
-    it = it.find(val)
-    if(it != entries.end()) return it; // if found value prexisting in tree return its location
-    return it.insert(val);
+    auto it = entries.find(val);
+    if(it != entries.end()) return {it,false}; // if found value prexisting in tree return its location
+    return {it.insert(val),true};
   }
 
   // EFFECTS : Returns an iterator to the first key-value pair in this Map.
   Iterator begin() const{
-
+     return entries.min_element();
   }
 
   // EFFECTS : Returns an iterator to "past-the-end".
   Iterator end() const{
-
+    return entries.end();
   }
 
 private:
-  BinarySearchTree<Pair_type,PairComp> entries;
   // Add a BinarySearchTree private member HERE.
+  BinarySearchTree<Pair_type,PairComp> entries;
+
 };
 
 // You may implement member functions below using an "out-of-line" definition
