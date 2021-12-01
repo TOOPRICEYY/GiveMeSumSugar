@@ -473,7 +473,7 @@ private:
   static bool check_sorting_invariant_impl(const Node *node, Compare less) {
     if(empty_impl(node)) return true;
     if(node->right) if(less(node->right->datum,node->datum)) return false;
-    if(node->left) if(less(node->left->datum,node->datum)) return false;
+    if(node->left) if(less(node->datum,node->left->datum)) return false;
     if(!check_sorting_invariant_impl(node->left,less)) return false;
     if(!check_sorting_invariant_impl(node->right,less)) return false;
     return true;
@@ -500,9 +500,9 @@ private:
   //       See https://en.wikipedia.org/wiki/Tree_traversal#Pre-order
   //       for the definition of a pre-order traversal.
   static void traverse_preorder_impl(const Node *node, std::ostream &os) {
-    if(node->right)traverse_preorder_impl(node->right,os);
     os << node->datum << " ";
     if(node->left)traverse_preorder_impl(node->left,os);
+    if(node->right)traverse_preorder_impl(node->right,os);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the smallest element
@@ -528,9 +528,8 @@ private:
     if(!node->right){
       return nullptr;
     }
-    if(less(node->right->datum,val)){
       return min_greater_than_impl(node->right,val,less);
-    }
+    
     return nullptr; 
   }
 

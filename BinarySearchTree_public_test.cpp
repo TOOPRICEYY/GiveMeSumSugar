@@ -3,6 +3,8 @@
 #include "BinarySearchTree.h"
 #include "unit_test_framework.h"
 #include <sstream>
+#include <iostream>
+
 
 using namespace std;
 
@@ -20,10 +22,15 @@ TEST(bst_public_test) {
   tree.insert(7);
   tree.insert(3);
 
+
   ASSERT_TRUE(tree.check_sorting_invariant());
+  
   ASSERT_TRUE(*tree.max_element() == 7);
+  
   ASSERT_TRUE(*tree.min_element() == 3);
+  
   ASSERT_TRUE(*tree.min_greater_than(5) == 7);
+
 
   cout << "cout << tree.to_string()" << endl;
   cout << tree.to_string() << endl << endl;
