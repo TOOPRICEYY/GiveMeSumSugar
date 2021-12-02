@@ -122,7 +122,7 @@ public:
   std::pair<Iterator, bool> insert(const Pair_type &val){
     auto it = entries.find(val);
     if(it != entries.end()) return {it,false}; // if found value prexisting in tree return its location
-    return {it.insert(val),true};
+    return {entries.insert(val),true};
   }
 
   // EFFECTS : Returns an iterator to the first key-value pair in this Map.
