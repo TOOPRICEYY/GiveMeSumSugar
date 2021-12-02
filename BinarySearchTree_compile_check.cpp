@@ -41,6 +41,8 @@ int main() {
 
   // Insert elements into trees to prevent breaking requires clauses
   tree.insert(100);
+    cout<<"TEST" << endl;
+
   tree.insert(1000);
   tree.insert(10000);
   duck_tree.insert(Duck(100));
@@ -57,7 +59,6 @@ int main() {
   BinarySearchTree<int>::Iterator it;
   BinarySearchTree<Duck, DuckWealthLess>::Iterator duck_it;
   
-
 
   // Big Three
   BinarySearchTree<int> tree_copy(const_tree);
@@ -81,16 +82,26 @@ int main() {
   st = const_duck_tree.size();
 
   const_tree.traverse_inorder(cout);
+  cout<<endl;
   const_duck_tree.traverse_inorder(cout);
+    cout<<endl;
+
 
   const_tree.traverse_preorder(cout);
+    cout<<endl;
+
   const_duck_tree.traverse_preorder(cout);
+    cout<<endl;
+
 
   b = const_tree.check_sorting_invariant();
+
   b = const_duck_tree.check_sorting_invariant();
+
 
   it = const_tree.begin();
   duck_it = const_duck_tree.begin();
+  
 
   it = const_tree.end();
   duck_it = const_duck_tree.end();
@@ -103,11 +114,13 @@ int main() {
   
   it = const_tree.find(0);
   duck_it = const_duck_tree.find(Duck());
+  
 
   s = const_tree.to_string();
   s = const_duck_tree.to_string();
 
   it = const_tree.min_greater_than(0);
+
   duck_it = const_duck_tree.min_greater_than(Duck());
 
 
