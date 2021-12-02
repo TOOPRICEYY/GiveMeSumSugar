@@ -20,6 +20,8 @@
 #include <cassert>  //assert
 #include <utility>  //pair
 
+using namespace std;
+
 template <typename Key_type, typename Value_type,
           typename Key_compare=std::less<Key_type> // default argument
          >
@@ -36,7 +38,6 @@ private:
   };
 
 public:
-
   // OVERVIEW: Maps are associative containers that store elements
   // formed by a combination of a key value and a mapped value,
   // following a specific order.
@@ -126,4 +127,31 @@ private:
 //      // YOUR IMPLEMENTATION GOES HERE
 //    }
 
+// START OF FUNCTION STUBS TO GET Map_compile_check.exe to run
+template <typename K, typename V, typename C>
+bool Map<K, V, C>::empty() const {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+typename Map<K, V, C>::Iterator Map<K, V, C>::find(const K& k) const {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+V& Map<K, V, C>::operator[](const K& k) {
+  assert(false);
+}
+
+template <typename K, typename V, typename C>
+std::pair<typename Map<K, V, C>::Iterator, bool> Map<K, V, C>::insert(const Pair_type &val) {
+  assert(false);
+}
+
+  Iterator begin() const {
+    
+  }
+
+  Iterator end() const;
+// END OF FUNCTION STUBS
 #endif // DO NOT REMOVE!!!
