@@ -38,7 +38,7 @@ private:
     private:
       Key_compare k;
     public:
-    bool operator()(const Pair_type &l, const Pair_type &r) const {return k(l,r);}
+    bool operator()(const Pair_type &l, const Pair_type &r) const {return k(l.first,r.first);}
   };
   
 
