@@ -14,7 +14,7 @@ TEST(map_public_test) {
   // A map stores two types, key and value
   Map<string, double> words;
   
-  //auto words_copy(words);
+  auto words_copy(words);
   // One way to use a map is like an array
   words["hello"] = 1;
   ASSERT_EQUAL(words["hello"], 1);
