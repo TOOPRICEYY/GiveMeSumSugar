@@ -40,6 +40,7 @@ private:
     public:
     bool operator()(const Pair_type &l, const Pair_type &r) const {return k(l.first,r.first);}
   };
+
   
 
 public:
@@ -68,6 +69,12 @@ public:
   // copy, assign, and destroy Maps.
 
 
+
+  
+
+
+
+
   // EFFECTS : Returns whether this Map is empty.
   bool empty() const{
     return entries.empty();
@@ -88,8 +95,9 @@ public:
   //       using "Value_type()".
   Iterator find(const Key_type& k) const{
     return entries.find({k,Value_type()});
-    
   }
+
+
 
   // MODIFIES: this
   // EFFECTS : Returns a reference to the mapped value for the given
@@ -127,7 +135,7 @@ public:
 
   // EFFECTS : Returns an iterator to the first key-value pair in this Map.
   Iterator begin() const{
-     return entries.min_element();
+     return entries.begin();
   }
 
   // EFFECTS : Returns an iterator to "past-the-end".
@@ -137,7 +145,7 @@ public:
 
 private:
   // Add a BinarySearchTree private member HERE.
-  BinarySearchTree<Pair_type,PairComp> entries;
+    BinarySearchTree<Pair_type,PairComp> entries;
 
 };
 

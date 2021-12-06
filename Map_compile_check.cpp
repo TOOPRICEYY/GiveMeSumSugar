@@ -48,7 +48,11 @@ int main() {
   Map<Duck, string, DuckWealthLess>::Iterator duck_it;
 
   // Big Three
+
   auto map_copy(const_map);
+    cout <<"Made it past "<<endl;
+
+  
   auto duck_map_copy(const_duck_map);
 
   map_copy = const_map;
@@ -88,7 +92,7 @@ int main() {
   cout << x2 << endl;
 
   // Using iterators
-
+  
   it = map.begin();
   duck_it = duck_map.begin();
 
