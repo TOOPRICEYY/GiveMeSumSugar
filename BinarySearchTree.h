@@ -19,6 +19,7 @@
 #include <cassert>  //assert
 #include <iostream> //ostream
 #include <functional> //less
+using namespace std;
 
 // You may add aditional libraries here if needed. You may use any
 // part of the STL except for containers.
@@ -92,7 +93,7 @@ public:
 
   // Copy constructor
   BinarySearchTree(const BinarySearchTree &other)
-    : root(copy_nodes_impl(other.root)) { }
+    : root(copy_nodes_impl(other.root)) {}
 
   // Assignment operator
   BinarySearchTree &operator=(const BinarySearchTree &rhs) {
@@ -368,6 +369,7 @@ private:
   static Node *copy_nodes_impl(Node *node) {
     Node *l = nullptr;
     Node *r = nullptr;
+    if(empty_impl(node)) return nullptr;
     if(node->left) l = copy_nodes_impl(node->left);
     if(node->right) r = copy_nodes_impl(node->right);
     return new Node(node->datum,l,r);
@@ -376,6 +378,7 @@ private:
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static void destroy_nodes_impl(Node *node) {
+    if(empty_impl(node)) return;
     if(node->right) destroy_nodes_impl(node->right);
     if(node->left) destroy_nodes_impl(node->left);
     delete node;

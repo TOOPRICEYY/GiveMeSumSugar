@@ -50,21 +50,27 @@ int main() {
   // Big Three
 
   auto map_copy(const_map);
-    cout <<"Made it past "<<endl;
+  
 
   
   auto duck_map_copy(const_duck_map);
+  
 
   map_copy = const_map;
+  
   duck_map_copy = const_duck_map;
+  
 
   // destructor tested implicitly at end of function
 
 
 
   // Functions that can be applied to a const map
+
   b = const_map.empty();
+
   b = const_duck_map.empty();
+  
 
   st = const_map.size();
   st = const_duck_map.size();

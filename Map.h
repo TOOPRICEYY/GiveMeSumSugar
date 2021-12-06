@@ -40,6 +40,7 @@ private:
     public:
     bool operator()(const Pair_type &l, const Pair_type &r) const {return k(l.first,r.first);}
   };
+    BinarySearchTree<Pair_type,PairComp> entries;
 
   
 
@@ -145,7 +146,7 @@ public:
 
 private:
   // Add a BinarySearchTree private member HERE.
-    BinarySearchTree<Pair_type,PairComp> entries;
+    //BinarySearchTree<Pair_type,PairComp> entries;
 
 };
 

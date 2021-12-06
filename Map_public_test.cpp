@@ -13,10 +13,15 @@ using std::vector;
 TEST(map_public_test) {
   // A map stores two types, key and value
   Map<string, double> words;
-
+  
+  //auto words_copy(words);
   // One way to use a map is like an array
   words["hello"] = 1;
   ASSERT_EQUAL(words["hello"], 1);
+
+
+  
+  
 
   // Maps store a std::pair type, which "glues" one key to one value.
   // The CS term is Tuple, a fixed-size heterogeneous container.
@@ -25,10 +30,12 @@ TEST(map_public_test) {
   tuple.second = 2;
   words.insert(tuple);
   ASSERT_EQUAL(words["world"], 2);
+  
 
   // Here's the C++11 way to insert a pair
   words.insert({"pi", 3.14159});
   ASSERT_ALMOST_EQUAL(words["pi"], 3.14159, 0.00001);
+  
 
   vector<string> expected_keys = { "hello", "pi", "world" };
   vector<double> expected_values = { 1, 3.14159, 2 };
@@ -45,6 +52,7 @@ TEST(map_public_test) {
     actual_keys.push_back(word);
     actual_values.push_back(number);
   }
+  
   ASSERT_EQUAL(expected_keys, actual_keys);
   ASSERT_EQUAL(expected_values, actual_values);
 
@@ -52,6 +60,7 @@ TEST(map_public_test) {
   auto found_it = words.find("pi");
   ASSERT_NOT_EQUAL(found_it, words.end());
   auto &word = (*found_it).first; //key
+  
   auto number = (*found_it).second; //value
   ASSERT_EQUAL(word, "pi");
   ASSERT_ALMOST_EQUAL(number, 3.14159, 0.00001);
@@ -59,6 +68,8 @@ TEST(map_public_test) {
   // When using the [] notation. An element not found is automatically created.
   // If the value type of the map is numeric, it will always be 0 "by default".
   ASSERT_EQUAL(words["bleh"], 0.0);
+  std::cout << "sdfs" << std::endl;
+
 }
 
 TEST_MAIN()
