@@ -71,7 +71,7 @@ vector<vector<string>> input_csv(istream &os){
     while(getline(os, s)){
         string temp = "";
         vector<string> temp_vec;
-        for(int i = 0; i<s.length(); i++){
+        for(unsigned int i = 0; i<s.length(); i++){
             if(s.at(i)==','){
                 temp_vec.push_back(temp);
                 //cout << temp << " ";
