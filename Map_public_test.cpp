@@ -68,7 +68,6 @@ TEST(map_public_test) {
   // When using the [] notation. An element not found is automatically created.
   // If the value type of the map is numeric, it will always be 0 "by default".
   ASSERT_EQUAL(words["bleh"], 0.0);
-  std::cout << "sdfs" << std::endl;
 
 }
 

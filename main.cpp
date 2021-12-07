@@ -4,6 +4,9 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <map>
+
+
 using namespace std;
 
 
@@ -11,7 +14,7 @@ vector<vector<string>> input_csv(istream&);
 
 int main(int argc, char * argv[]) {
 cout.precision(3);
-bool debug = false;
+//bool debug = false;
 
 
 if(argc<3||argc>4){
@@ -21,7 +24,7 @@ string temp = "";
 if(argc==4){temp = argv[3];if(temp!="--debug"){
     cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;return 1;}}
 else{
-    debug = true;
+    //debug = true;
 }
 string training_file = argv[1];
 string testing_file  = argv[2];
@@ -31,8 +34,20 @@ string testing_file  = argv[2];
 ifstream fi;
 fi.open(training_file);
 if(!fi.is_open()){cout << "Error opening file: " << training_file << endl; return 1;}
-input_csv(fi);
+auto parsed = input_csv(fi);
 
+parsed.erase(parsed.begin(),parsed.begin()+1);
+
+std::map<string, std::map<string,double>> categories;
+
+for(auto & val : parsed){
+    stringstream ss;
+    ss << val[3];
+    string a;
+    while(ss>>a) ++(categories[val[2]][a]);
+}
+
+//cout << categories["euchre"]["the"] << endl;
 
 fi.close();
 
@@ -59,7 +74,7 @@ vector<vector<string>> input_csv(istream &os){
         for(int i = 0; i<s.length(); i++){
             if(s.at(i)==','){
                 temp_vec.push_back(temp);
-                cout << temp << " ";
+                //cout << temp << " ";
                 temp = "";
             }else{
                 temp+=s.at(i);
@@ -67,11 +82,8 @@ vector<vector<string>> input_csv(istream &os){
 
         }
         if(temp!="") temp_vec.push_back(temp);
-        cout << temp << endl;
+        //cout << temp << endl;
+        vec.push_back(temp_vec);
     }
-
-    
-
-
     return vec;
 }
