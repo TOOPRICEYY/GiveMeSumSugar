@@ -6,13 +6,14 @@
 #include <vector>
 #include <map>
 #include <cmath>
+#include "csvstream.h"
 
 
 
 using namespace std;
 
 
-vector<vector<string>> input_csv(istream&);
+vector<map<string, string>> input_csv(istream&);
 void debug_func(bool , pair<map<string, map<string,double>>,
 map<string, map<string,double>>> &,  map<string,double> &);
 double prob_calc(string , const vector<string> &,
@@ -43,24 +44,27 @@ string testing_file  = argv[2];
 ifstream fi;
 fi.open(training_file);
 if(!fi.is_open()){cout << "Error opening file: " << training_file << endl; return 1;}
-auto parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin()+1);
+vector<map<string, string>> parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin());
+
+//for( auto & val : parsed){ cout<<val["tag"]<<", "<<val["content"]<<endl;}
+
 map<string, map<string,double>> vocab;
 map<string, map<string,double>> categories;
 map<string,double> cat_counts;
 
 
 if(debug) cout << "training data:"<<endl;
-int i = 0;
+unsigned int i = 0;
 for(auto & val : parsed){ //input all parsed into vocab
     stringstream ss;
     ++i;
-    ++cat_counts[val[2]];
-    ss << val[3];
+    ++cat_counts[val["tag"]];
+    ss << val["content"];
     string a;
     map<string, double> words_to_add; // impliments to stop duplicating additions
     while(ss>>a) {words_to_add[a]=1;}
-    for(auto m : words_to_add){++(vocab[m.first][val[2]]); ++(categories[val[2]][m.first]);}
-    if(debug) cout << "  label = " << val[2] << ", content = " << val[3] << endl;
+    for(auto m : words_to_add){++(vocab[m.first][val["content"]]); ++(categories[val["tag"]][m.first]);}
+    if(debug) cout << "  label = " << val["tag"] << ", content = " << val["content"] << endl;
 }
 cat_counts["total"] = i;
 cout<<"trained on " << i << " examples" << endl;
@@ -80,13 +84,13 @@ fi.close();
 
 fi.open(testing_file);
 if(!fi.is_open()){cout << "Error opening file: " << testing_file << endl; return 1;}
-parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin()+1);
+parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin());
 cout << "test data:" << endl;
 i = 0;
 int correct  = 0;
 for(auto & val : parsed){ //input all parsed into vocab
     stringstream ss;
-    ss << val[3];
+    ss << val["content"];
     string a;
     ++i;
 
@@ -103,10 +107,11 @@ for(auto & val : parsed){ //input all parsed into vocab
             lowest = temp;
         }
     }
-    cout << "  correct = " << val[2] << ", predicted = " << winer 
+    cout << "  correct = " << val["tag"] << ", predicted = " << winer 
     << ", log-probability score = " << lowest << endl;
-    cout <<"  content = " <<val[3] << endl<<endl;
-    if(val[2]==winer) ++correct;
+    cout <<"  content = " <<val["content"] << endl<<endl;
+
+    if((val["tag"])==winer) ++correct;
 }
 
 cout << "performance: " <<correct<<" / "<<i<<" posts predicted correctly"<<endl;
@@ -174,26 +179,13 @@ map<string,double> &cat_counts){
 
 }
 
-vector<vector<string>> input_csv(istream &os){
-    vector<vector<string>> vec;
-    string s;
+vector<map<string, string>> input_csv(istream &os){
+    csvstream csv(os);
+    vector<map<string, string>> vec;
+    map<string, string> m_temp;
 
-    while(getline(os, s)){
-        string temp = "";
-        vector<string> temp_vec;
-        for(unsigned int i = 0; i<s.length(); i++){
-            if(s.at(i)==','){
-                temp_vec.push_back(temp);
-                //cout << temp << " ";
-                temp = "";
-            }else{
-                temp+=s.at(i);
-            }
-
-        }
-        if(temp!="") temp_vec.push_back(temp);
-        //cout << temp << endl;
-        vec.push_back(temp_vec);
+    while(csv>>m_temp){
+        vec.push_back(m_temp);
     }
     return vec;
 }
