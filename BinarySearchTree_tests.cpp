@@ -39,6 +39,12 @@ TEST(test_stub) {
     ASSERT_TRUE(*++++it == 3);
     it = aye.find(10);
     ASSERT_TRUE(++it == aye.end());
+    it = aye.begin();
+    *it = 3;
+    ASSERT_FALSE(aye.check_sorting_invariant());
+    BinarySearchTree<int> gabe = aye;
+    
+
 }
 
 TEST_MAIN()
