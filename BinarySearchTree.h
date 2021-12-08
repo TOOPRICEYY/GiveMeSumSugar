@@ -398,7 +398,8 @@ private:
   //       not less than B and B is not less than A.
   static Node * find_impl(Node *node, const T &query, Compare less) {
     if(empty_impl(node)) return nullptr;
-    if(!(less(node->datum, query) || less(query, node->datum))) return node; // something found
+    if(!(less(node->datum, query) || less(query, node->datum)))
+    {return node;} // something found
     Node *r = nullptr;
     if(node->right) r = find_impl(node->right, query, less); // check right branch
     if(r) return r;

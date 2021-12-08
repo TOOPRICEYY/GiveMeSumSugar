@@ -38,7 +38,8 @@ private:
     private:
       Key_compare k;
     public:
-    bool operator()(const Pair_type &l, const Pair_type &r) const {return k(l.first,r.first);}
+    bool operator()(const Pair_type &l, const Pair_type &r) const {
+      return k(l.first,r.first);}
   };
     BinarySearchTree<Pair_type,PairComp> entries;
 
@@ -130,7 +131,8 @@ public:
   //           the value true.
   std::pair<Iterator, bool> insert(const Pair_type &val){
     auto it = entries.find(val);
-    if(it != entries.end()) return {it,false}; // if found value prexisting in tree return its location
+    if(it != entries.end()) return {it,false}; 
+    // if found value prexisting in tree return its location
     return {entries.insert(val),true};
   }
 
