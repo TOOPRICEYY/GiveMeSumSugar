@@ -44,7 +44,7 @@ string testing_file  = argv[2];
 ifstream fi;
 fi.open(training_file);
 if(!fi.is_open()){cout << "Error opening file: " << training_file << endl; return 1;}
-vector<map<string, string>> parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin());
+vector<map<string, string>> parsed = input_csv(fi);
 
 //for( auto & val : parsed){ cout<<val["tag"]<<", "<<val["content"]<<endl;}
 
@@ -74,53 +74,17 @@ cout<<endl;
 pair<map<string, map<string,double>>,
 map<string, map<string,double>>> bundle = {vocab, categories};
 
+debug_func(debug,bundle,cat_counts); // prints all log probs for each category
 
-    if(argc<3||argc>4){
-        cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;return 1;}
-    string temp = "";
-
-    if(argc==4){temp = argv[3];if(temp!="--debug"){
-        cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;return 1;}
-    else debug = true;
-    }
-    string training_file = argv[1];
-    string testing_file  = argv[2];
-
-    //TRAINING
-
-    ifstream fi;
-    fi.open(training_file);
-    if(!fi.is_open()){cout << "Error opening file: " << training_file << endl; return 1;}
-    auto parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin()+1);
-    map<string, map<string,double>> vocab;
-    map<string, map<string,double>> categories; map<string,double> cat_counts;
+fi.close();
 
 
-    if(debug) cout << "training data:"<<endl;
-    int i = 0;
-    for(auto & val : parsed){ //input all parsed into vocab
-        stringstream ss;
-        ++i;
-        ++cat_counts[val[2]];
-        ss << val[3];
-        string a;
-        map<string, double> words_to_add; // impliments to stop duplicating additions
-        while(ss>>a) {words_to_add[a]=1;}
-        for(auto m : words_to_add){++(vocab[m.first][val[2]]); 
-        ++(categories[val[2]][m.first]);}
-        if(debug) cout << "  label = " << val[2] << ", content = " << val[3] << endl;
-    }
-    cat_counts["total"] = i;
-    cout<<"trained on " << i << " examples" << endl;
-    if(debug)cout<<"vocabulary size = " << vocab.size()<<endl;
-    cout<<endl;
 
-    pair<map<string, map<string,double>>,
-    map<string, map<string,double>>> bundle = {vocab, categories};
+//Testing
 
 fi.open(testing_file);
 if(!fi.is_open()){cout << "Error opening file: " << testing_file << endl; return 1;}
-parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin());
+parsed = input_csv(fi);
 cout << "test data:" << endl;
 i = 0;
 int correct  = 0;
@@ -130,7 +94,8 @@ for(auto & val : parsed){ //input all parsed into vocab
     string a;
     ++i;
 
-    fi.close();
+    vector<string> words;
+    while(ss>>a) words.push_back(a);
 
 
     double lowest = -1000;
@@ -149,40 +114,15 @@ for(auto & val : parsed){ //input all parsed into vocab
     if((val["tag"])==winer) ++correct;
 }
 
-    //Testing
-
-    fi.open(testing_file);
-    if(!fi.is_open()){cout << "Error opening file: " << testing_file << endl; return 1;}
-    parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin()+1);
-    cout << "test data:" << endl;
-    i = 0;
-    int correct  = 0;
-    for(auto & val : parsed){ //input all parsed into vocab
-        stringstream ss; ss << val[3]; string a; ++i;
-
-        vector<string> words;
-        while(ss>>a) words.push_back(a);
+cout << "performance: " <<correct<<" / "<<i<<" posts predicted correctly"<<endl;
 
 
-        double lowest = -1000;
-        string winer = "";
-        for(auto & cat : cat_counts){
-            double temp = prob_calc(cat.first,words,bundle,cat_counts);
-            if(temp>lowest){
-                winer = cat.first;
-                lowest = temp;
-            }
-        }
-        cout << "  correct = " << val[2] << ", predicted = " << winer 
-        << ", log-probability score = " << lowest << endl;
-        cout <<"  content = " <<val[3] << endl<<endl;
-        if(val[2]==winer) ++correct;
-    }
-
-    cout << "performance: " <<correct<<" / "<<i<<" posts predicted correctly"<<endl;
+}
 
 
-} // end of main
+
+
+
 
 
 
@@ -201,8 +141,7 @@ map<string, map<string,double>>> &bundle,  map<string,double> &cat_counts){
     cout << "classifier parameters:"<<endl;
     for(auto n : bundle.second){
         for(auto w : n.second){
-            cout<<"  "<<n.first<<":"<<w.first<<
-            ", count = "<<w.second<<", log-likelihood = " 
+            cout<<"  "<<n.first<<":"<<w.first<<", count = "<<w.second<<", log-likelihood = " 
             <<prob_calc_one_word(n.first,w.first,bundle,cat_counts)<<endl;
             //if(n.first=="euchre"&&w.first=="the"){exit(1);}
         }
@@ -217,15 +156,10 @@ double add_up_counts(map<string,double> m){
     return t;
 }
 
-double prob_calc_one_word(string category,string word,pair<map<string,
-map<string,double>>,map<string, map<string,double>>> &bundle, 
-map<string,double> &cat_counts){
-    if(add_up_counts(bundle.first[word])==0) {
-        return log(1/cat_counts["total"]);
-        }// if word doesnt show up in training
-    if(bundle.second[category][word]==0) {
-        return log(add_up_counts(bundle.first[word])/cat_counts["total"]); 
-    } //shows up in training but not in this category
+double prob_calc_one_word(string category, string word,  pair<map<string, map<string,double>>,
+map<string, map<string,double>>> &bundle,  map<string,double> &cat_counts){
+    if(add_up_counts(bundle.first[word])==0) return log(1/cat_counts["total"]);// if word doesnt show up in training
+    if(bundle.second[category][word]==0) return log(add_up_counts(bundle.first[word])/cat_counts["total"]); //shows up in training but not in this category
     //cout<<" "<<bundle.second[category][word]/cat_counts[category]<<" ";
     return log(bundle.second[category][word]/cat_counts[category]);
     
@@ -233,9 +167,8 @@ map<string,double> &cat_counts){
 
 
 double prob_calc(string category, const vector<string> &words,
- pair<map<string, map<string,double>>,map<string, map<string,double>>> &bundle, 
- // can make more efficent by generating a map to refer to for all words
- map<string,double> &cat_counts){
+ pair<map<string, map<string,double>>, map<string, map<string,double>>> &bundle, // can make more efficent by generating a map to refer to for all words
+map<string,double> &cat_counts){
     double total = log(cat_counts[category]/cat_counts["total"]);
    
     for(string word : words){
