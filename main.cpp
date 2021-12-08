@@ -22,103 +22,93 @@ double prob_calc_one_word(string , string ,  pair<map<string, map<string,double>
 map<string, map<string,double>>> &,  map<string,double> &);
 
 int main(int argc, char * argv[]) {
-cout.precision(3);
-bool debug = false;
+    cout.precision(3);
+    bool debug = false;
 
 
-if(argc<3||argc>4){
-    cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;return 1;}
-string temp = "";
+    if(argc<3||argc>4){
+        cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;return 1;}
+    string temp = "";
 
-if(argc==4){temp = argv[3];if(temp!="--debug"){
-    cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;return 1;}
-else{
-    debug = true;
-}}
-string training_file = argv[1];
-string testing_file  = argv[2];
-
-//TRAINING
-
-ifstream fi;
-fi.open(training_file);
-if(!fi.is_open()){cout << "Error opening file: " << training_file << endl; return 1;}
-auto parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin()+1);
-map<string, map<string,double>> vocab;
-map<string, map<string,double>> categories;
-map<string,double> cat_counts;
-
-
-if(debug) cout << "training data:"<<endl;
-int i = 0;
-for(auto & val : parsed){ //input all parsed into vocab
-    stringstream ss;
-    ++i;
-    ++cat_counts[val[2]];
-    ss << val[3];
-    string a;
-    map<string, double> words_to_add; // impliments to stop duplicating additions
-    while(ss>>a) {words_to_add[a]=1;}
-    for(auto m : words_to_add){++(vocab[m.first][val[2]]); 
-    ++(categories[val[2]][m.first]);}
-    if(debug) cout << "  label = " << val[2] << ", content = " << val[3] << endl;
-}
-cat_counts["total"] = i;
-cout<<"trained on " << i << " examples" << endl;
-if(debug)cout<<"vocabulary size = " << vocab.size()<<endl;
-cout<<endl;
-
-pair<map<string, map<string,double>>,
-map<string, map<string,double>>> bundle = {vocab, categories};
-
-debug_func(debug,bundle,cat_counts); // prints all log probs for each category
-
-fi.close();
-
-
-
-//Testing
-
-fi.open(testing_file);
-if(!fi.is_open()){cout << "Error opening file: " << testing_file << endl; return 1;}
-parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin()+1);
-cout << "test data:" << endl;
-i = 0;
-int correct  = 0;
-for(auto & val : parsed){ //input all parsed into vocab
-    stringstream ss;
-    ss << val[3];
-    string a;
-    ++i;
-
-    vector<string> words;
-    while(ss>>a) words.push_back(a);
-
-
-    double lowest = -1000;
-    string winer = "";
-    for(auto & cat : cat_counts){
-        double temp = prob_calc(cat.first,words,bundle,cat_counts);
-        if(temp>lowest){
-            winer = cat.first;
-            lowest = temp;
-        }
+    if(argc==4){temp = argv[3];if(temp!="--debug"){
+        cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;return 1;}
+    else debug = true;
     }
-    cout << "  correct = " << val[2] << ", predicted = " << winer 
-    << ", log-probability score = " << lowest << endl;
-    cout <<"  content = " <<val[3] << endl<<endl;
-    if(val[2]==winer) ++correct;
-}
+    string training_file = argv[1];
+    string testing_file  = argv[2];
 
-cout << "performance: " <<correct<<" / "<<i<<" posts predicted correctly"<<endl;
+    //TRAINING
 
-
-}
-
-
-
+    ifstream fi;
+    fi.open(training_file);
+    if(!fi.is_open()){cout << "Error opening file: " << training_file << endl; return 1;}
+    auto parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin()+1);
+    map<string, map<string,double>> vocab;
+    map<string, map<string,double>> categories; map<string,double> cat_counts;
 
 
+    if(debug) cout << "training data:"<<endl;
+    int i = 0;
+    for(auto & val : parsed){ //input all parsed into vocab
+        stringstream ss;
+        ++i;
+        ++cat_counts[val[2]];
+        ss << val[3];
+        string a;
+        map<string, double> words_to_add; // impliments to stop duplicating additions
+        while(ss>>a) {words_to_add[a]=1;}
+        for(auto m : words_to_add){++(vocab[m.first][val[2]]); 
+        ++(categories[val[2]][m.first]);}
+        if(debug) cout << "  label = " << val[2] << ", content = " << val[3] << endl;
+    }
+    cat_counts["total"] = i;
+    cout<<"trained on " << i << " examples" << endl;
+    if(debug)cout<<"vocabulary size = " << vocab.size()<<endl;
+    cout<<endl;
+
+    pair<map<string, map<string,double>>,
+    map<string, map<string,double>>> bundle = {vocab, categories};
+
+    debug_func(debug,bundle,cat_counts); // prints all log probs for each category
+
+    fi.close();
+
+
+
+    //Testing
+
+    fi.open(testing_file);
+    if(!fi.is_open()){cout << "Error opening file: " << testing_file << endl; return 1;}
+    parsed = input_csv(fi);parsed.erase(parsed.begin(),parsed.begin()+1);
+    cout << "test data:" << endl;
+    i = 0;
+    int correct  = 0;
+    for(auto & val : parsed){ //input all parsed into vocab
+        stringstream ss; ss << val[3]; string a; ++i;
+
+        vector<string> words;
+        while(ss>>a) words.push_back(a);
+
+
+        double lowest = -1000;
+        string winer = "";
+        for(auto & cat : cat_counts){
+            double temp = prob_calc(cat.first,words,bundle,cat_counts);
+            if(temp>lowest){
+                winer = cat.first;
+                lowest = temp;
+            }
+        }
+        cout << "  correct = " << val[2] << ", predicted = " << winer 
+        << ", log-probability score = " << lowest << endl;
+        cout <<"  content = " <<val[3] << endl<<endl;
+        if(val[2]==winer) ++correct;
+    }
+
+    cout << "performance: " <<correct<<" / "<<i<<" posts predicted correctly"<<endl;
+
+
+} // end of main
 
 
 
