@@ -57,11 +57,13 @@ for(auto & val : parsed){ //input all parsed into vocab
     ++cat_counts[val[2]];
     ss << val[3];
     string a;
-    while(ss>>a) {++(vocab[a][val[2]]); ++(categories[val[2]][a]);}
-    if(debug) cout << " label = " << val[2] << ", content = " << val[3] << endl;
+    map<string, double> words_to_add; // impliments to stop duplicating additions
+    while(ss>>a) {words_to_add[a]=1;}
+    for(auto m : words_to_add){++(vocab[m.first][val[2]]); ++(categories[val[2]][m.first]);}
+    if(debug) cout << "  label = " << val[2] << ", content = " << val[3] << endl;
 }
 cat_counts["total"] = i;
-cout<<"trained on " << i << " examples " << endl;
+cout<<"trained on " << i << " examples" << endl;
 if(debug)cout<<"vocabulary size = " << vocab.size()<<endl;
 cout<<endl;
 
@@ -101,9 +103,9 @@ for(auto & val : parsed){ //input all parsed into vocab
             lowest = temp;
         }
     }
-    cout << " correct = " << val[2] << ", predicted = " << winer 
+    cout << "  correct = " << val[2] << ", predicted = " << winer 
     << ", log-probability score = " << lowest << endl;
-    cout <<" content = " <<val[3] << endl<<endl;
+    cout <<"  content = " <<val[3] << endl<<endl;
     if(val[2]==winer) ++correct;
 }
 
@@ -126,7 +128,7 @@ map<string, map<string,double>>> &bundle,  map<string,double> &cat_counts){
     cout<<"classes:"<<endl;
     for(auto n : cat_counts){
         if(n.first=="total") continue;
-        cout <<" "<<n.first<<", "<<n.second<<" examples, log-prior = "<<
+        cout <<"  "<<n.first<<", "<<n.second<<" examples, log-prior = "<<
         log(n.second/cat_counts["total"])<<endl;
     }
 
@@ -134,8 +136,9 @@ map<string, map<string,double>>> &bundle,  map<string,double> &cat_counts){
     cout << "classifier parameters:"<<endl;
     for(auto n : bundle.second){
         for(auto w : n.second){
-            cout<<" "<<n.first<<":"<<w.first<<" count = "<<w.second<<", log-likelihood = " 
+            cout<<"  "<<n.first<<":"<<w.first<<", count = "<<w.second<<", log-likelihood = " 
             <<prob_calc_one_word(n.first,w.first,bundle,cat_counts)<<endl;
+            //if(n.first=="euchre"&&w.first=="the"){exit(1);}
         }
     }
     cout<<endl;
@@ -152,6 +155,7 @@ double prob_calc_one_word(string category, string word,  pair<map<string, map<st
 map<string, map<string,double>>> &bundle,  map<string,double> &cat_counts){
     if(add_up_counts(bundle.first[word])==0) return log(1/cat_counts["total"]);// if word doesnt show up in training
     if(bundle.second[category][word]==0) return log(add_up_counts(bundle.first[word])/cat_counts["total"]); //shows up in training but not in this category
+    //cout<<" "<<bundle.second[category][word]/cat_counts[category]<<" ";
     return log(bundle.second[category][word]/cat_counts[category]);
     
 }
