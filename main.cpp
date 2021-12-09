@@ -53,8 +53,10 @@ class Learn{
             string a;
             map<string, int> words_to_add; // impliments to stop duplicating additions
             while(ss>>a) {words_to_add[a]=1;}
-            for(auto m : words_to_add){++(vocab[m.first][val["content"]]); ++(categories[val["tag"]][m.first]);}
-            if(debug) cout << "  label = " << val["tag"] << ", content = " << val["content"] << endl;
+            for(auto m : words_to_add){++(vocab[m.first][val["content"]]); 
+            ++(categories[val["tag"]][m.first]);}
+            if(debug) cout << "  label = " << val["tag"] << 
+            ", content = " << val["content"] << endl;
         }
         cat_counts["total"] = i;
         cout<<"trained on " << i << " examples" << endl;
@@ -112,7 +114,8 @@ if(argc<3||argc>4){
 string temp = "";
 
 if(argc==4){temp = argv[3];if(temp!="--debug"){
-    cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;debug = true;return 1;}
+    cout << "Usage: main.exe TRAIN_FILE TEST_FILE [--debug]" << endl;
+    debug = true;return 1;}
 else{
     debug = true;
 }}
@@ -164,7 +167,8 @@ map<string, map<string,int>>> &bundle,  map<string,int> &cat_counts){
     cout << "classifier parameters:"<<endl;
     for(auto n : bundle.second){
         for(auto w : n.second){
-            cout<<"  "<<n.first<<":"<<w.first<<", count = "<<w.second<<", log-likelihood = " 
+            cout<<"  "<<n.first<<":"<<w.first<<
+            ", count = "<<w.second<<", log-likelihood = " 
             <<prob_calc_one_word(n.first,w.first,bundle,cat_counts)<<endl;
             //if(n.first=="euchre"&&w.first=="the"){exit(1);}
         }
@@ -179,18 +183,24 @@ double add_up_counts(map<string,int> m){
     return t;
 }
 
-double prob_calc_one_word(string category, string word,  pair<map<string, map<string,int>>,
-map<string, map<string,int>>> &bundle,  map<string,int> &cat_counts){
-    if(bundle.second[category][word]>0) return log(double(bundle.second[category][word])/cat_counts[category]);
-    if(add_up_counts(bundle.first[word])==0) return log(1.0/cat_counts["total"]);// if word doesnt show up in training
-    return log(double(add_up_counts(bundle.first[word]))/cat_counts["total"]); //shows up in training but not in this category
+double prob_calc_one_word(string category, string word,  
+pair<map<string, map<string,int>>,
+map<string, map<string,int>>> &bundle,  
+map<string,int> &cat_counts){
+    if(bundle.second[category][word]>0){ 
+    return log(double(bundle.second[category][word])/cat_counts[category]);
+    }
+    if(add_up_counts(bundle.first[word])==0){
+    return log(1.0/cat_counts["total"]);}// if word doesnt show up in training
+    return log(double(add_up_counts(bundle.first[word]))/cat_counts["total"]); 
     
     
 }
 
 
 double prob_calc(string category, const vector<string> &words,
- pair<map<string, map<string,int>>, map<string, map<string,int>>> &bundle, // can make more efficent by generating a map to refer to for all words
+pair<map<string, map<string,int>>, 
+map<string, map<string,int>>> &bundle, 
 map<string,int> &cat_counts){
     
     double total = log(double(cat_counts[category])/cat_counts["total"]);
