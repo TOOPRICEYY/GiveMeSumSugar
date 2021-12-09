@@ -22,6 +22,11 @@ map<string,int> &);
 double prob_calc_one_word(string , string ,  pair<map<string, map<string,int>>,
 map<string, map<string,int>>> &,  map<string,int> &);
 
+class Model{
+    private:
+
+};
+
 int main(int argc, char * argv[]) {
 cout.precision(3);
 bool debug = false;
@@ -159,10 +164,10 @@ double add_up_counts(map<string,int> m){
 
 double prob_calc_one_word(string category, string word,  pair<map<string, map<string,int>>,
 map<string, map<string,int>>> &bundle,  map<string,int> &cat_counts){
+    if(bundle.second[category][word]>0) return log(double(bundle.second[category][word])/cat_counts[category]);
     if(add_up_counts(bundle.first[word])==0) return log(1.0/cat_counts["total"]);// if word doesnt show up in training
-    if(bundle.second[category][word]==0) return log(double(add_up_counts(bundle.first[word]))/cat_counts["total"]); //shows up in training but not in this category
-    //cout<<" "<<bundle.second[category][word]/cat_counts[category]<<" ";
-    return log(double(bundle.second[category][word])/cat_counts[category]);
+    return log(double(add_up_counts(bundle.first[word]))/cat_counts["total"]); //shows up in training but not in this category
+    
     
 }
 
@@ -170,6 +175,7 @@ map<string, map<string,int>>> &bundle,  map<string,int> &cat_counts){
 double prob_calc(string category, const vector<string> &words,
  pair<map<string, map<string,int>>, map<string, map<string,int>>> &bundle, // can make more efficent by generating a map to refer to for all words
 map<string,int> &cat_counts){
+    
     double total = log(double(cat_counts[category])/cat_counts["total"]);
     map<string, int> words_to_add; // impliments to stop duplicating additions
     for(auto & word : words) {words_to_add[word]=1;}
@@ -178,6 +184,8 @@ map<string,int> &cat_counts){
     }
 
     return total;
+    
+    return 1;
 
 }
 
