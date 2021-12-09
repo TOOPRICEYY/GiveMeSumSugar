@@ -70,10 +70,10 @@ test data:
   correct = euchre, predicted = euchre, log-probability score = -13.7
   content = my code segfaults when bob is the dealer
 
-  correct = euchre, predicted = calculator, log-probability score = -12.5
+  correct = euchre, predicted = total, log-probability score = -12.5
   content = no rational explanation for this bug
 
-  correct = calculator, predicted = calculator, log-probability score = -13.6
+  correct = calculator, predicted = total, log-probability score = -14.6
   content = countif function in stack class not working
 
-performance: 2 / 3 posts predicted correctly
+performance: 1 / 3 posts predicted correctly
