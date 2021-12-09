@@ -31,6 +31,9 @@ test: BinarySearchTree_compile_check.exe \
 main.exe: main.cpp
 	$(CXX) $(CXXFLAGS) main.cpp -o $@
 
+other_main.exe: other_main.cpp
+	$(CXX) $(CXXFLAGS) other_main.cpp -o $@
+
 BinarySearchTree_tests.exe: BinarySearchTree_tests.cpp BinarySearchTree.h
 	$(CXX) $(CXXFLAGS) $< -o $@
 
